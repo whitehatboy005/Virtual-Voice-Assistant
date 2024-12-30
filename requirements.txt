@@ -11,7 +11,7 @@ geocoder==1.38.1
 google-generativeai==0.7.2
 generativeai==0.0.1
 beautifulsoup4==4.12.3
-speedtest==0.0.1
+speedtest-cli
 pywhatkit==5.4
 googletrans==3.0.0
 python-dotenv==1.0.1
