@@ -17,7 +17,7 @@ from bs4 import BeautifulSoup
 import speedtest
 import pywhatkit
 import re
-from googletrans import LANGUAGES, Translator
+from deep_translator import GoogleTranslator
 from pygments import highlight
 from pygments.lexers import PythonLexer, HtmlLexer, get_lexer_by_name
 from pygments.formatters import TerminalFormatter
@@ -28,7 +28,7 @@ load_dotenv('config.env')
 #API KEY Environment
 AI_API_KEY = os.getenv("AI_API_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
-
+COUNTRY = os.getenv("COUNTRY")
 #Ai API CALLING
 genai.configure(api_key = AI_API_KEY)
 
@@ -228,24 +228,26 @@ def calculation():
         speak("Would you like to say the question or input the question?")
         choice = takecommand().lower()
 
-        if "say the question" in choice:
+        if "say the question" in choice or "say" in choice:
             speak("Please say the question sir")
             query = takecommand()
             calculate(query)
-        elif "input the question" in choice:
-            speak("Please input the question sir :")
+        elif "input the question" in choice or "input" in choice:
+            speak("Please input the question sir")
             expression = input("Enter the mathematical expression: ")
             calculate(expression)
-
+        elif "no thanks" in choice or "exit" in choice or "no" in choice:
+            speak("ok sir, Exiting Calculation")
+            TaskExecution()
         else:
             speak("Sorry, I didn't understand. Please say again.")
             continue
 
         speak("Do you want to ask another mathematical question sir?")
         response = takecommand().lower()
-        if "no thanks" in response or "exit" in response:
+        if "no thanks" in response or "exit" in response or "no" in response:
             speak("ok sir, Exiting Calculation")
-            break
+            TaskExecution()
 
 
 # Backspace function
@@ -320,9 +322,6 @@ def game():
         SPS()
     elif "number guessing" in choice or "number" in choice:
         NGG()
-
-
-
 
 # Stone, Paper, Scissor Game
 def SPS():
@@ -448,19 +447,111 @@ def NGG():
             TaskExecution()
         else:
             speak("Sir, please say Yes or No")
-        play_again = takecommand()
+            play_again = takecommand()
 
-# NEWS
+# NEWS function
+def fetch_news_from_mediastack(country=COUNTRY):
+    # Force category to "general"
+    category = "general"
+    main_url = f"http://api.mediastack.com/v1/news?access_key={NEWS_API_KEY}&categories={category}&countries={country}&limit=10"
+
+
+    response = requests.get(main_url)
+
+    if response.status_code != 200:
+        speak("There was an issue fetching news.")
+        print(f"Error: {response.status_code}")
+        print(response.json())  # Debugging: Print error details
+        return []
+
+    main_page = response.json()
+    if not main_page.get("data"):
+        speak("No news articles were found for the general category.")
+        return []
+
+    return main_page["data"]
+
+def get_ordinal_word(num):
+    """Convert a number to its word form (e.g., 1 -> first, 2 -> second, ...)."""
+    ordinals = {
+        1: "First", 2: "Second", 3: "Third", 4: "Fourth", 5: "Fifth",
+        6: "Sixth", 7: "Seventh", 8: "Eighth", 9: "Ninth", 10: "Tenth"
+    }
+    return ordinals.get(num, f"{num}th")  # Default to 'nth' for values over 10, but we won't need it here.
+
 def news():
-    main_url = f'https://newsapi.org/v2/top-headlines?country=in&category=technology&apiKey={NEWS_API_KEY}'
-    main_page = requests.get(main_url).json()
-    articles = main_page["articles"]
-    head = []
-    day = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth"]
-    for ar in articles:
-        head.append(ar["title"])
-    for i in range(len(day)):
-        speak(f"Today's {day[i]} news is: {head[i]}")
+    articles = fetch_news_from_mediastack(country=COUNTRY)
+
+    if not articles:
+        speak("Sorry sir, I couldn't fetch any news at the moment.")
+        return
+
+    # Speak the top news with word ordinals
+    for i, article in enumerate(articles[:10], start=1):  # Limiting to top 10 news
+        headline = article.get("title", "No headline available")
+        ordinal_word = get_ordinal_word(i)  # Get the ordinal word representation (first, second, etc.)
+        speak(f"Today's {ordinal_word} news is: {headline}")
+
+#Translator function
+def translate_text(query):
+    # Languages supported by Google Translator (subset for example purposes)
+    supported_languages = {
+        'af': 'afrikaans', 'sq': 'albanian', 'am': 'amharic', 'ar': 'arabic', 'hy': 'armenian',
+        'az': 'azerbaijani', 'eu': 'basque', 'be': 'belarusian', 'bn': 'bengali', 'bs': 'bosnian',
+        'bg': 'bulgarian', 'ca': 'catalan', 'ceb': 'cebuano', 'ny': 'chichewa', 'zh-cn': 'chinese (simplified)',
+        'zh-tw': 'chinese (traditional)', 'co': 'corsican', 'hr': 'croatian', 'cs': 'czech', 'da': 'danish',
+        'nl': 'dutch', 'en': 'english', 'eo': 'esperanto', 'et': 'estonian', 'tl': 'filipino',
+        'fi': 'finnish', 'fr': 'french', 'fy': 'frisian', 'gl': 'galician', 'ka': 'georgian',
+        'de': 'german', 'el': 'greek', 'gu': 'gujarati', 'ht': 'haitian creole', 'ha': 'hausa',
+        'haw': 'hawaiian', 'iw': 'hebrew', 'he': 'hebrew', 'hi': 'hindi', 'hmn': 'hmong',
+        'hu': 'hungarian', 'is': 'icelandic', 'ig': 'igbo', 'id': 'indonesian', 'ga': 'irish',
+        'it': 'italian', 'ja': 'japanese', 'jw': 'javanese', 'kn': 'kannada', 'kk': 'kazakh',
+        'km': 'khmer', 'ko': 'korean', 'ku': 'kurdish (kurmanji)', 'ky': 'kyrgyz', 'lo': 'lao',
+        'la': 'latin', 'lv': 'latvian', 'lt': 'lithuanian', 'lb': 'luxembourgish', 'mk': 'macedonian',
+        'mg': 'malagasy', 'ms': 'malay', 'ml': 'malayalam', 'mt': 'maltese', 'mi': 'maori',
+        'mr': 'marathi', 'mn': 'mongolian', 'my': 'myanmar (burmese)', 'ne': 'nepali', 'no': 'norwegian',
+        'or': 'odia', 'ps': 'pashto', 'fa': 'persian', 'pl': 'polish', 'pt': 'portuguese',
+        'pa': 'punjabi', 'ro': 'romanian', 'ru': 'russian', 'sm': 'samoan', 'gd': 'scots gaelic',
+        'sr': 'serbian', 'st': 'sesotho', 'sn': 'shona', 'sd': 'sindhi', 'si': 'sinhala',
+        'sk': 'slovak', 'sl': 'slovenian', 'so': 'somali', 'es': 'spanish', 'su': 'sundanese',
+        'sw': 'swahili', 'sv': 'swedish', 'tg': 'tajik', 'ta': 'tamil', 'te': 'telugu',
+        'th': 'thai', 'tr': 'turkish', 'uk': 'ukrainian', 'ur': 'urdu', 'ug': 'uyghur',
+        'uz': 'uzbek', 'vi': 'vietnamese', 'cy': 'welsh', 'xh': 'xhosa', 'yi': 'yiddish',
+        'yo': 'yoruba', 'zu': 'zulu'
+    }
+
+    # Display supported languages
+    print("Supported languages:")
+    for code, language in supported_languages.items():
+        print(f"{code}: {language}")
+
+    speak("Please enter which language you want to translate sir?")
+
+    # Capture user input for the target language
+    destination_language = input("Enter language code: ").lower()
+
+    # Check if the entered language is valid
+    if destination_language not in supported_languages:
+        speak("Invalid language code entered. Please try again.")
+        return translate_text(query)  # Retry if invalid language code
+
+    # Ask the user to speak the sentence to translate
+    speak("Please say the sentence you want to translate.")
+    sentence_to_translate = takecommand()
+
+    if sentence_to_translate:
+        # Translate the sentence
+        translated_text = GoogleTranslator(source='auto', target=destination_language).translate(sentence_to_translate)
+
+        # Display the translated text
+        speak("Your Translated text displayed sir")
+        print(f"Translated text: {translated_text}")
+    else:
+        speak("No sentence was recognized. Please try again.")
+
+def translate():
+    query = "Translate sentence"
+    translate_text(query)
 
 #Usage file calling colorful
 def print_colorful_usage(content):
@@ -542,7 +633,7 @@ def ai():
         if user_input == "none":
             continue  # If no valid input, continue listening
 
-        if "deactivate" in user_input:
+        if "deactivate" in user_input or "exit" in user_input:
             speak("Deactivating AI mode.")
             break
 
@@ -660,11 +751,6 @@ def TaskExecution():
         elif "time" in query:
             tt = time.strftime("%I:%M %p")
             speak(f"now {tt} sir")
-
-        #rerun the program
-        elif "rerun" in query:
-            speak("ok sir, Rerun the program")
-            pyautogui.hot('shift', 'f10')
 
         # camera functions
         elif "take photo" in query or "take video" in query:
@@ -926,26 +1012,49 @@ def TaskExecution():
 
         # find my location
         elif "where i am" in query or "where we are" in query:
-            speak("wait sir, let me check")
+            speak("wait a second sir, let me check")
             location = get_location()
             speak("sir i am not sure, but i think we are in " + location)
             speak("Do you have any other work sir....")
 
         # search wikipedia
-        elif "wikipedia" in query:
-            speak("searching wikipedia...")
-            query = query.replace("wikipedia...")
-            results = wikipedia.summary(query, sentences=2)
-            speak("according to wikipedia")
-            speak(results)
-            speak("Do you have any other work sir....")
+        elif "search on wikipedia" in query:
+            speak("searching on wikipedia...")
+            text_to_type = query.split("search on wikipedia")[0].strip()
+            if text_to_type:
+                try:
+                    # Fetching summary from Wikipedia
+                    results = wikipedia.summary(text_to_type, sentences=2)
+                    speak(f"According to Wikipedia: {results}")
+                except wikipedia.exceptions.DisambiguationError as e:
+                    speak("There are multiple results. Could you be more specific?")
+                except wikipedia.exceptions.HTTPTimeoutError:
+                    speak("Sorry, there was a problem with the connection. Please try again later.")
+                except Exception as e:
+                    speak("Sorry sir, I couldn't find any information on that.")
+            else:
+                speak("Please specify what you want to search on Wikipedia, for example, 'what is python search on wikipedia'.")
+            speak("Do you have any other work sir...")
 
         # search on google
         elif "search on google" in query:
-            speak("sir, what should i search on google?")
-            cm = takecommand().lower()
-            webbrowser.open(f"{cm}")
-            speak("Do you have any other work sir....")
+            speak("Searching Google...")
+
+            # Extract the text before "search on google"
+            text_to_type = query.split("search on google")[0].strip()
+
+            if text_to_type:
+                try:
+                    # Construct the Google search URL
+                    search_url = f"https://www.google.com/search?q={text_to_type}"
+                    webbrowser.open(search_url)  # Open the browser with the Google search URL
+                    speak(f"Here are the results for {text_to_type} on Google.")
+                except Exception as e:
+                    speak("Sorry sir, I couldn't perform the Google search.")
+            else:
+                speak("Please specify what you want to search on Google, for example, 'what is python search on Google'.")
+
+            speak("Do you have any other work sir...")
 
         #Mouse controls
         elif "right click" in query:
@@ -1031,7 +1140,7 @@ def TaskExecution():
             pyautogui.press("volumedown")
 
         # GAME
-        elif "let's play a game" in query or "let's play game" in query or "let's play game" in query or "let's play a game" in query or "play some game" in query or "game" in query:
+        elif "let's play a game" in query or "let's play game" in query or "let's play game" in query or "let's play a game" in query:
             game()
 
         # check battery percent
@@ -1045,10 +1154,10 @@ def TaskExecution():
         elif "internet speed" in query:
             speak("please wait a minute sir, checking internet speed...")
             st = speedtest.Speedtest()
-            d1 = st.download() / 1_000_000
+            dp = st.download() / 1_000_000
             up = st.upload() / 1_000_000
             # ping = st.results.ping
-            speak(f"sir your internet speed is {d1:.2f} Mbps downloading speed and {up:.2f} Mbps uploading speed")
+            speak(f"sir your internet speed is {dp:.2f} Mbps downloading speed and {up:.2f} Mbps uploading speed")
             speak("Do you have any other work sir....")
 
         # shutdown system
@@ -1077,7 +1186,7 @@ def TaskExecution():
 
         # latest news
         elif "tell me a latest news" in query or "today latest news" in query or "today top 10 news" in query or "today news" in query:
-            speak("please wait sir, fetching the latest news")
+            speak("please wait sir, Fetching the top 10 general news.")
             news()
             speak("Do you have any other work sir....")
 
@@ -1158,29 +1267,14 @@ def TaskExecution():
                 speak("ok sir")
             speak("Do you have any other work sir....")
 
-        # Calculation3rertfgyuiwaz
+        # Calculation
         elif "calculate" in query or "calculation" in query:
             calculation()
             speak("Do you have any other work sir....")
 
         #Translator
-        elif "translate" in query:
-            text_to_type = query.split("translate", 1)[-1].strip()
-            supported_languages = LANGUAGES
-            languages_options = "\n".join([f"{code}: {language}" for code, language in supported_languages.items()])
-            translator = Translator()
-            text_to_translate = text_to_type
-            print(languages_options)
-            while True:
-                speak("Please enter which language you want to translate sir?")
-                destination_language = input()
-                if destination_language in supported_languages:
-                    translated_text = translator.translate(text_to_translate, dest=destination_language)
-                    speak("Translated text displayed sir: ")
-                    print(translated_text.text)
-                    break
-                else:
-                    speak("Invalid language code entered sir. Please try again.")
+        elif "translate" in query or "activate translate mode" in query:
+            translate()
 
 
         # check temperature
@@ -1190,7 +1284,7 @@ def TaskExecution():
             r = requests.get(url)
             data = BeautifulSoup(r.text, "html.parser")
             temp = data.find("div", class_="BNeawe").text
-            speak(f"current temperature is {temp} sir ")
+            speak(f"current temperature is {temp} sir")
             speak("Do you have any other work sir....")
 
         # check weather
@@ -1199,7 +1293,7 @@ def TaskExecution():
             speak("Do you have any other work sir....")
 
         # AI response
-        elif "activate ai" in query:
+        elif "activate ai" in query or "ai mode" in query:
             ai()
             speak("Do you have any other work sir....")
 
@@ -1217,4 +1311,5 @@ if __name__ == "__main__":
 
         else:
             speak("Access Denied")
+
 
