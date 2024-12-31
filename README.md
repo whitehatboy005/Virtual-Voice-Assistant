@@ -69,7 +69,7 @@ To obtain the `GEMINI_API_KEY` required for your project:
 
 To obtain the `NEWS_API_KEY` required for your project:
 
-1. Visit [NewsAPI.org](https://mediastack.com/).
+1. Visit [Media Stack.com](https://mediastack.com/).
 2. Sign up or log in to your account.
 3. Generate an API key for your project.
 4. Copy the API key provided.
