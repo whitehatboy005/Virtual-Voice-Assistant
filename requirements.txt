@@ -13,6 +13,6 @@ generativeai==0.0.1
 beautifulsoup4==4.12.3
 speedtest-cli
 pywhatkit==5.4
-googletrans==3.0.0
+deep-translator==1.11.4
 python-dotenv==1.0.1
 Pygments==2.18.0
