@@ -1,9 +1,9 @@
-# Virtual Voice Assistant (Jarvis)
+# 🤖 Virtual Voice Assistant (Jarvis)
 [![License](https://img.shields.io/github/license/whitehatboy005/Virtual-Assistant-Jarvis)](LICENSE.md)
 
 It's Python-based virtual voice assistant capable of performing various tasks using voice commands. It utilizes speech recognition, web scraping, automation, and external APIs to provide a wide range of functionalities.
 
-## Features
+## 🚀 Features
 
 - **Voice Activation**
   - Activates upon recognizing a predefined password.
@@ -74,13 +74,10 @@ To obtain the `NEWS_API_KEY` required for your project:
 3. Generate an API key for your project.
 4. Copy the API key provided.
 #
-## Installation
+## ⚙️ Installation
 ## Clone the Repository
 ```bash
 git clone https://github.com/whitehatboy005/Virtual-Voice-Assistant
-```
-## Move the file
-```bash
 cd Virtual-Voice-Assistant
 ```
 ## Install Dependencies
@@ -96,6 +93,6 @@ notepad config.env
 python jarvis.py
 ```
 #
-## License
+## 📝 License
 
 This project is licensed under the terms of the [MIT license](LICENSE.md).
