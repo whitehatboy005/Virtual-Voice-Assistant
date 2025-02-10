@@ -84,7 +84,7 @@ cd Virtual-Voice-Assistant
 ```bash
 pip install -r requirements.txt
 ```
-## Config Your Details
+## Configure Environment Variables
 ```bash
 notepad config.env
 ```
