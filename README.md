@@ -59,7 +59,7 @@ To use Jarvis, ensure you have Python installed along with the necessary librari
 
 ### GEMINI_API_KEY
 
-To obtain the `GEMINI_API_KEY` required for your project:
+To obtain the `GEMINI_API_KEY` required for our project:
 
 1. Visit [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Follow the instructions to create a new API key.
@@ -67,11 +67,20 @@ To obtain the `GEMINI_API_KEY` required for your project:
 
 ### NEWS_API_KEY
 
-To obtain the `NEWS_API_KEY` required for your project:
+To obtain the `NEWS_API_KEY` required for our project:
 
-1. Visit [Media Stack.com](https://mediastack.com/).
+1. Visit [Media Stack](https://mediastack.com/).
 2. Sign up or log in to your account.
 3. Generate an API key for your project.
+4. Copy the API key provided.
+
+### WEATHER_API_KEY
+
+To obtain the `WEATHER_API_KEY` required for our project:
+
+1. Visit [OpenWeather](https://openweathermap.org/api).
+2. Sign up or log in to your account.
+3. Go to API keys section.
 4. Copy the API key provided.
 #
 ## ⚙️ Installation
