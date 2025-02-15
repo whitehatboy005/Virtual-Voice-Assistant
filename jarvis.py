@@ -27,6 +27,7 @@ load_dotenv('config.env')
 
 #API KEY Environment
 AI_API_KEY = os.getenv("AI_API_KEY")
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 COUNTRY = os.getenv("COUNTRY")
 #Ai API CALLING
@@ -86,12 +87,22 @@ def speak(audio):
 
 # weather information
 def weather():
-    search = f"weather in {PLACE}"
-    url = f"https://www.google.com/search?q={search}"
-    r = requests.get(url)
-    data = BeautifulSoup(r.text, "html.parser")
-    weather = data.find("div", class_="BNeawe tAd8D AP7Wnd").text
-    speak(f"current weather is {weather} sir ")
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={PLACE}&appid={WEATHER_API_KEY}&units=metric"
+    response = requests.get(url)
+    data = response.json()
+
+    if response.status_code == 200:
+        temp = data["main"]["temp"]
+        description = data["weather"][0]["description"].capitalize()
+
+        # Get current day and time
+        now = datetime.now()
+        day = now.strftime("%A")
+        time = now.strftime("%I:%M %p")
+
+        speak(f"Current weather is {day} {time}, {description} sir.")
+    else:
+        speak("Sorry sir, I couldn't fetch the weather details.")
 
 
 # Take command function
