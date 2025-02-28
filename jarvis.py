@@ -105,6 +105,7 @@ def weather():
         speak("Sorry sir, I couldn't fetch the weather details.")
 
 
+
 # Take command function
 def takecommand():
     r = sr.Recognizer()
@@ -597,14 +598,14 @@ class SessionManager:
     def get_session(self):
         return self.sessions
 def ai_response(input_text):
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('gemini-1.5-pro-latest')
     response = model.generate_content(input_text)
     return response.text
 
 def is_code(text):
     """Check if the response contains code-like content."""
     # Code detection patterns
-    code_indicators = ['<html>', 'def ', 'class ', 'import ', '</', 'function', 'let ', 'const ', 'public ', 'private ',
+    code_indicators = ['<html>', 'def ', 'class ', 'import ', '<', '</', 'function', 'let ', 'const ', 'public ', 'private ',
                        '```', '{', '}']
     return any(indicator in text for indicator in code_indicators)
 
@@ -677,6 +678,7 @@ def TaskExecution():
     last_2_percent_announcement = None
 
     while True:
+
         current_minute = datetime.now().minute
         current_hour = datetime.now().hour
 
@@ -728,588 +730,588 @@ def TaskExecution():
                     last_2_percent_announcement = now
             previous_plugged = plugged
             previous_battery_percent = battery_percent
-        query = takecommand().lower()
-
-        # introduce ourself
-        if "tell me about yourself" in query or "introduce yourself" in query or "who are you" in query:
-            speak("Sure sir, I am Jarvis, an Advanced Voice Assistant. I am equipped with a variety of features to enhance your productivity and convenience. I can open and close any apps, search anything on Google and Wikipedia, check the temperature, facilitate message passing, transcribe spoken words into text, play games, utilize AI features for various tasks, perform keyboard shortcuts, control volume, provide the latest news updates, print documents, manage system functions such as shutdown, restart, and sleep, check internet speed, and much more. I can also translate languages to help you communicate effectively. Simply tell me what you need, and I'll do my best to assist you efficiently.")
-
-        # open any apps
-        elif ("open" in query) and ("settings" not in query and "task" not in query and "accessibility" not in query and "it" not in query and "run" not in query and "emoji" not in query and "clipboard" not in query and "mail" not in query and "notification" not in query and "tab" not in query and "facebook" not in query and "youtube" not in query and "window" not in query and "downloads" not in query):
-            pyautogui.press('win')
-            time.sleep(0.5)
-            text_to_type = query.split("open", 1)[-1].strip()
-            speak(f"ok sir, opening {text_to_type}")
-            type_text(text_to_type)
-            pyautogui.press('enter')
-
-        # closing any apps
-        elif ("close" in query) and ("settings" not in query and "task" not in query and "program" not in query and "it" not in query and "accessibility" not in query and "run" not in query and "emoji" not in query and "clipboard" not in query and "mail" not in query and "page" not in query and "notification" not in query and "tab" not in query and "facebook" not in query and "youtube" not in query and "window" not in query and "downloads" not in query):
-            text_to_type = query.split("close", 1)[-1].strip()
-            speak(f"ok sir, closing {text_to_type}")
-            pyautogui.hotkey('alt', 'f4')
-            speak("Do you have any other work sir....")
-
-        #show functions text file
-        elif "show usage file" in query or "how to use" in query or "show your functionalities" in query:
-            speak("Sure sir, showing my functionalities. Please read this...")
-            with open('Usage.txt', 'r') as file:
-                content = file.read()
-                print_colorful_usage(content)
-            speak("Do you have any other work sir....")
-
-        #time
-        elif "time" in query:
-            tt = time.strftime("%I:%M %p")
-            speak(f"now {tt} sir")
-
-        # camera functions
-        elif "take photo" in query or "take video" in query:
-            pyautogui.press('enter')
-        elif "change photo" in query or "switch to photo" in query:
-            pyautogui.press('down')
-        elif "change video" in query or "switch to video" in query:
-            pyautogui.press('up')
-
-        # Alarm set
-        elif "set alarm" in query:
-            clock()
-            speak("Do you have any other work sir....")
-
-        # settings open
-        elif "open settings" in query:
-            speak("Ok sir, Opening Settings")
-            pyautogui.hotkey('win', 'i')
-
-        # Task manager open
-        elif "open task manager" in query:
-            speak("ok sir, Opening task manager")
-            pyautogui.hotkey('ctrl', 'shift', 'esc')
-
-        # open run prompt
-        elif "open run prompt" in query or "open run bar" in query or "open run dialog box" in query:
-            pyautogui.hotkey('win', 'r')
-
-        # open accessibility
-        elif "open accessibility" in query:
-            speak("Ok sir, Opening Accessibility")
-            pyautogui.hotkey('win', 'u')
-
-        # lock the system
-        elif "lock the system" in query:
-            speak("Ok sir, Lock your system")
-            pyautogui.hotkey('win', 'l')
-
-        # open clipboard bar
-        elif "open clipboard" in query:
-            speak("Ok sir, Opening Clipboard")
-            pyautogui.hotkey('win', 'v')
-
-        # open emoji panel
-        elif "open emoji panel" in query:
-            speak("Ok sir, Opening emoji panel")
-            pyautogui.hotkey('win', '.')
-
-        # open mail
-        elif "open mail" in query or "check mail" in query or "open email" in query or "check email" in query:
-            speak("Please wait sir. I will display your inbox")
-            webbrowser.open("https://mail.google.com/mail/u/0/#inbox")
-
-        # Minimize and maximize control
-        elif "minimise all windows" in query or "minimise all window" in query:
-            speak("Ok sir, Minimizing all windows")
-            pyautogui.hotkey('win', 'm')
-        elif "maximize all windows" in query or "maximise all window" in query:
-            speak("Ok sir, Maximizing all windows")
-            pyautogui.hotkey('win', 'shift', 'm')
-        elif "minimise the window" in query or "minimise the page" in query:
-            speak("Ok sir, Minimizing the window")
-            pyautogui.hotkey('win', 'down')
-        elif "maximize the window" in query or "maximise the page" in query:
-            speak("Ok sir, Maximizing the window")
-            pyautogui.hotkey('win', 'up')
-
-        # Taskbar open and close function
-        elif "open first task" in query or "open 1st task" in query:
-            pyautogui.hotkey('win', '1')
-        elif "close first task" in query or "close 1st task" in query:
-            pyautogui.hotkey('win', '1')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open second task" in query or "open 2nd task" in query:
-            pyautogui.hotkey('win', '2')
-        elif "close second task" in query or "close 2nd task" in query:
-            pyautogui.hotkey('win', '2')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open third task" in query or "open 3rd task" in query:
-            pyautogui.hotkey('win', '3')
-        elif "close third task" in query or "close 3rd task" in query:
-            pyautogui.hotkey('win', '3')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open fourth task" in query or "open 4th task" in query:
-            pyautogui.hotkey('win', '4')
-        elif "close fourth task" in query or "close 4th task" in query:
-            pyautogui.hotkey('win', '4')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open fifth task" in query or "open 5th task" in query:
-            pyautogui.hotkey('win', '5')
-        elif "close fifth task" in query or "close 5th task" in query:
-            pyautogui.hotkey('win', '5')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open sixth task" in query or "open 6th task" in query:
-            pyautogui.hotkey('win', '6')
-        elif "close sixth task" in query or "close 6th task" in query:
-            pyautogui.hotkey('win', '6')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open seventh task" in query or "open 7th task" in query:
-            pyautogui.hotkey('win', '7')
-        elif "close seventh task" in query or "close 7th task" in query:
-            pyautogui.hotkey('win', '7')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open eighth task" in query or "open 8th task" in query:
-            pyautogui.hotkey('win', '8')
-        elif "close eighth task" in query or "close 8th task" in query:
-            pyautogui.hotkey('win', '8')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open ninth task" in query or "open 9th task" in query:
-            pyautogui.hotkey('win', '9')
-        elif "close ninth task" in query or "close 9th task" in query:
-            pyautogui.hotkey('win', '9')
-            pyautogui.hotkey('alt', 'f4')
-        elif "open tenth task" in query or "open 10th task" in query:
-            pyautogui.hotkey('win', '0')
-        elif "close tenth task" in query or "close 10th task" in query:
-            pyautogui.hotkey('win', '0')
-            pyautogui.hotkey('alt', 'f4')
-
-        # print screen
-        elif "print the page" in query or "print" in query:
-            speak("ok sir, printed the screen")
-            pyautogui.hotkey('ctrl', 'p')
-            pyautogui.press('enter')
-            speak("Do you have any other work sir....")
-
-        # notification open
-        elif "open notification bar" in query or "display notification" in query or "notification" in query or "show notification" in query:
-            speak("Ok sir, showing notifications")
-            pyautogui.hotkey('win', 'n')
-            speak("Do you have any other work sir....")
-
-        # Don't disturb mode
-        elif "don't disturb" in query:
-            pyautogui.hotkey('win', 'n')
-            time.sleep(0.5)
-            pyautogui.press('enter')
-            pyautogui.press('esc')
-            speak("Do you have any other work sir....")
-
-        # open new tab and close
-        elif "open new tab" in query or "create new tab" in query:
-            speak("Ok sir, Opening New Tab")
-            pyautogui.hotkey('ctrl', 't')
-
-        elif "no no close them" in query or "no no close it" in query or "close it" in query:
-            speak("ok sir, closing it")
-            pyautogui.hotkey('alt', 'f4')
-            speak("Do you have any other work sir....")
-
-        elif "close this tab" in query or "delete this tab" in query:
-            speak("Ok sir, closing this tab")
-            pyautogui.hotkey("ctrl", "w")
-
-        # Closing the page
-        elif "close the page" in query or "closing the page" in query or "close this page" in query or "closing this page" in query:
-            speak("Okay sir, Closing this page")
-            pyautogui.hotkey("ctrl", "w")
-            speak("Do you have any other work sir....")
-
-        #Delete
-        elif "delete it" in query:
-            speak("ok sir, Deleting it")
-            pyautogui.press('del')
-
-        #show downloads
-        elif "downloads" in query:
-            speak("ok sir, showing downloads page")
-            pyautogui.hotkey('ctrl', 'j')
-
-        #find something
-        elif "find" in query:
-            pyautogui.hotkey('ctrl', 'f')
-            time.sleep(0.5)
-            text_to_type = query.split("find", 1)[-1].strip()
-            speak("showing our result sir")
-            type_text(text_to_type)
-
-
-
-        # open new window
-        elif "open new window" in query or "create new window" in query:
-            speak("Ok sir, Opening New window")
-            pyautogui.hotkey('ctrl', 'n')
-
-        # Move tab next and previous
-        elif "move next tab" in query or "move the next tab" in query or "move to next tab" in query:
-            speak("Ok sir, Moving Next Tab")
-            pyautogui.hotkey('ctrl', 'tab')
-        elif "move previous tab" in query or "move the previous tab" in query or "move to previous tab" in query:
-            speak("Ok sir, Moving Previous Tab")
-            pyautogui.hotkey('ctrl', 'shift', 'tab')
-
-        # Select all,cut,copy,paste,save as
-        elif "select all text" in query or "select all" in query:
-            speak("Ok sir, selecting all text")
-            pyautogui.hotkey('ctrl', 'a')
-        elif "cut the text" in query or "cut" in query or "cut their" in query or "cut them" in query or "cut it" in query:
-            speak("Ok sir, cut the text")
-            pyautogui.hotkey('ctrl', 'x')
-        elif "copy the text" in query or "copy" in query or "copy their" in query or "copy them" in query or "copy it" in query:
-            speak("Ok sir, copied the text")
-            pyautogui.hotkey('ctrl', 'c')
-        elif "paste the text" in query or "paste" in query or "paste their" in query or "paste them" in query or "paste it" in query:
-            speak("Ok sir, pasting the text")
-            pyautogui.hotkey('ctrl', 'v')
-        elif "save as the file" in query or "save as" in query or "save as their" in query or "save as them" in query or "save as it" in query:
-            speak("Ok sir, saving the file")
-            pyautogui.hotkey('ctrl', 's')
-            speak("Do you have any other work sir....")
-
-
-        # youtube opening and closing
-        elif "open youtube" in query:
-            speak("Ok sir, Opening YouTube")
-            webbrowser.open("www.youtube.com")
-            speak("Do you have any other work sir....")
-        elif "close youtube" in query:
-            speak("Ok sir, Closing You Tube")
-            pyautogui.hotkey('alt', 'f4')
-            speak("Do you have any other work sir....")
-        elif "minimise the video" in query:
-            pyautogui.press('i')
-        elif "maximize the video" in query:
-            pyautogui.press('i')
-        elif "full screen" in query:
-            pyautogui.press('f')
-        elif "exit full screen" in query:
-            pyautogui.press('esc')
-        elif "caption" in query or "subtitle" in query:
-            pyautogui.press('c')
-
-        # facebook open and closing
-        elif "open facebook" in query:
-            speak("Okay sir, Opening Facebook")
-            webbrowser.open("www.facebook.com")
-
-        elif "close facebook" in query:
-            speak("Okay sir, Closing Facebook")
-            pyautogui.hotkey('alt', 'f4')
-            speak("Do you have any other work sir....")
-
-        # song on youtube
-        elif "song on youtube" in query:
-            speak("Please say the song name you want to play sir!")
-            song_name = takecommand()
-            # song_name = input("Please enter the name of the song you want to play: ")
-            pywhatkit.playonyt(song_name)
-            speak(f"Searching for {song_name} song on YouTube...")
-            speak("wait a second sir your song play quickly")
-            time.sleep(8)
-            pyautogui.press('k')
-
-        # find ip address
-        elif "ip address" in query:
-            ip_address = get_ip_address()
-            speak("Your IP address is " + ip_address)
-            speak("Do you have any other work sir....")
-
-        # find my location
-        elif "where i am" in query or "where we are" in query:
-            speak("wait a second sir, let me check")
-            location = get_location()
-            speak("sir i am not sure, but i think we are in " + location)
-            speak("Do you have any other work sir....")
-
-        # search wikipedia
-        elif "search on wikipedia" in query:
-            speak("searching on wikipedia...")
-            text_to_type = query.split("search on wikipedia")[0].strip()
-            if text_to_type:
-                try:
-                    # Fetching summary from Wikipedia
-                    results = wikipedia.summary(text_to_type, sentences=2)
-                    speak(f"According to Wikipedia: {results}")
-                except wikipedia.exceptions.DisambiguationError as e:
-                    speak("There are multiple results. Could you be more specific?")
-                except wikipedia.exceptions.HTTPTimeoutError:
-                    speak("Sorry, there was a problem with the connection. Please try again later.")
-                except Exception as e:
-                    speak("Sorry sir, I couldn't find any information on that.")
-            else:
-                speak("Please specify what you want to search on Wikipedia, for example, 'what is python search on wikipedia'.")
-            speak("Do you have any other work sir...")
-
-        # search on google
-        elif "search on google" in query:
-            speak("Searching Google...")
-
-            # Extract the text before "search on google"
-            text_to_type = query.split("search on google")[0].strip()
-
-            if text_to_type:
-                try:
-                    # Construct the Google search URL
-                    search_url = f"https://www.google.com/search?q={text_to_type}"
-                    webbrowser.open(search_url)  # Open the browser with the Google search URL
-                    speak(f"Here are the results for {text_to_type} on Google.")
-                except Exception as e:
-                    speak("Sorry sir, I couldn't perform the Google search.")
-            else:
-                speak("Please specify what you want to search on Google, for example, 'what is python search on Google'.")
-
-            speak("Do you have any other work sir...")
-
-        #Mouse controls
-        elif "right click" in query:
-            pyautogui.rightClick()
-        elif "left click" in query:
-            pyautogui.leftClick()
-        elif "click" in query:
-            pyautogui.click()
-        elif "double click" in query or "open it" in query:
-            pyautogui.doubleClick()
-
-        # keyboard contols
-        elif "zoom in" in query:
-            pyautogui.hotkey('ctrl', '+')
-        elif "zoom out" in query:
-            pyautogui.hotkey('ctrl', '-')
-        elif "pause" in query or "stop" in query:
-            pyautogui.press('playpause')
-        elif ("play" in query or "start" in query) and ("game" not in query and "song" not in query):
-            pyautogui.press('playpause')
-        elif "increase speed" in query or "increase play speed" in query:
-            pyautogui.hotkey('shift', '.')
-        elif "decrease speed" in query or "decrease play speed" in query:
-            pyautogui.hotkey('shift', ',')
-        elif "next video" in query:
-            pyautogui.hotkey('alt', 'right')
-            speak("ok sir, move to next video")
-        elif "previous video" in query:
-            pyautogui.hotkey('alt', 'left')
-            speak("ok sir, move to previous video")
-        elif "scroll up" in query:
-            pyautogui.press("pageup")
-        elif "scroll down" in query:
-            pyautogui.press("pagedown")
-        elif "type" in query:
-            text_to_type = query.split("type", 1)[-1].strip()
-            type_text(text_to_type)
-        elif "enter" in query or "send it" in query:
-            pyautogui.press('enter')
-        elif "tab" in query or "go to next field" in query or "go to next box" in query:
-            pyautogui.press('tab')
-
-        # erase and backspace function
-        elif ("erase" in query or "backspace" in query) and ("letter" in query or "letters" in query):
-
-            num_letters = parse_erase_command(query)
-
-            # If a valid number of letters to erase is found, proceed with erasing
-            if num_letters is not None:
-                erase_letters(num_letters)
-            else:
-                speak("Sorry, I couldn't understand the number of letters to erase.")
-
-        # search anything type model
-        elif "search" in query:
-            text_to_type = query.split("search", 1)[-1].strip()
-            type_text(text_to_type)
-            pyautogui.press('enter')
-            speak("ok sir, Searching your result")
-
-        # send message
-        elif "message" in query:
-            text_to_type = query.split("message", 1)[-1].strip()
-            type_text(text_to_type)
-            pyautogui.press('enter')
-        elif "send" in query:
-            text_to_type = query.split("send", 1)[-1].strip()
-            type_text(text_to_type)
-            pyautogui.press('enter')
-
-        # Volume controls
-        elif "mute" in query and "system" not in query and "all" not in query:
-            pyautogui.press("m")
-        elif "unmute" in query and "system" not in query and "all" not in query:
-            pyautogui.press("m")
-        elif "mute the system" in query or "mute the hole system" in query or "mute all" in query:
-            pyautogui.press("volumemute")
-        elif "unmute the system" in query or "mute the hole system" in query or "mute all" in query:
-            pyautogui.press("volumemute")
-        elif "volume up" in query:
-            pyautogui.press("volumeup")
-        elif "volume down" in query:
-            pyautogui.press("volumedown")
-
-        # GAME
-        elif "let's play a game" in query or "let's play game" in query or "let's play game" in query or "let's play a game" in query:
-            game()
-
-        # check battery percent
-        elif "how much power left" in query or "battery" in query or "how much power we have" in query:
-            battery = psutil.sensors_battery()
-            percentage = battery.percent
-            speak(f"Our system have {percentage}% battery sir")
-            speak("Do you have any other work sir....")
-
-        # check internet speed
-        elif "internet speed" in query:
-            speak("please wait a minute sir, checking internet speed...")
-            st = speedtest.Speedtest()
-            dp = st.download() / 1_000_000
-            up = st.upload() / 1_000_000
-            # ping = st.results.ping
-            speak(f"sir your internet speed is {dp:.2f} Mbps downloading speed and {up:.2f} Mbps uploading speed")
-            speak("Do you have any other work sir....")
-
-        # shutdown system
-        elif "shutdown the system" in query or "shutdown our system" in query or "shutdown my system" in query:
-            os.system("shutdown /s /t 5")
-            speak("Ok sir, Shutdown our system")
-
-        # restart system
-        elif "restart the system" in query or "restart our system" in query or "restart my system" in query:
-            os.system("shutdown /r /t 5")
-            speak("Ok sir, Restart our system")
-
-        # sleep system
-        elif "sleep the system" in query or "sleep our system" in query or "sleep my system" in query:
-            os.system("sudo pmset sleepnow")
-            os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
-            speak("ok sir, sleep our system")
-
-        # switch window
-        elif "switch the window" in query or "switch" in query:
-            pyautogui.keyDown("alt")
-            pyautogui.press("tab")
-            time.sleep(0.5)
-            pyautogui.keyUp("alt")
-            speak("ok sir, switching the window")
-
-        # latest news
-        elif "tell me a latest news" in query or "today latest news" in query or "today top 10 news" in query or "today news" in query:
-            speak("please wait sir, Fetching the top 10 general news.")
-            news()
-            speak("Do you have any other work sir....")
-
-        # closing Jarvis
-        elif "goodbye Jarvis" in query or "goodbye" in query or "close the program" in query or "exit the program" in query:
-            speak("Goodbye sir, have a good day.")
-            speak("Jarvis Deactivated")
-            sys.exit()
-
-        # Normal commands
-        elif "no thanks" in query:
-            speak("okay sir, if you have any work call me anytime sir")
-            while True:
-                permission = takecommand()
-                if "jarvis" in permission or "wake up" in permission:
-                    speak("Welcome back sir, please tell me how may i help you sir?")
-                    TaskExecution()
-        elif "ready" in query:
-            speak("Yes sir, I'm ready")
-        elif "thankyou" in query:
-            speak("your welcome sir.")
-        elif "hello" in query or "hey" in query:
-            speak("Hello sir, may i help you with something.")
-        elif "how are you" in query:
-            speak("I am fine sir,what about you.")
-        elif "also good" in query or "fine" in query:
-            speak("That's great to hear from you.")
-        elif "thank you" in query or "thanks" in query:
-            speak("It's my pleasure sir.")
-        elif "you can sleep" in query or "sleep now" in query or "go to sleep mode" in query or "go to sleep" in query:
-            speak("okay sir, i am going to sleep you call me anytime sir.")
-            while True:
-                permission = takecommand()
-                if "jarvis" in permission or "wake up" in permission:
-                    speak("Welcome back sir, please tell me how may i help you sir?")
-                    TaskExecution()
-
-        # check instagram profile
-        elif "instagram profile" in query or "profile on instagram" in query or "check instagram profile" in query or "let me check instagram profile" in query:
-            speak("sir please enter the username correctly.")
-            name = input("Enter username here:")
-            webbrowser.open(f"www.instagram.com/{name}")
-            speak(f"Sir here is the profile of the user {name}")
-            time.sleep(5)
-            speak("sir would you like to download a profile of this account.")
-            condition = takecommand().lower()
-            if "okay" in condition:
-                mod = instaloader.Instaloader()
-                mod.download_profile(name, profile_pic_only=True)
-                speak("i am done sir, profile picture is saved in our main folder. Now i am ready for next command")
-            elif "don't want" in condition or "no" in condition:
-                speak("Ok sir")
-                pass
-            speak("Do you have any other work sir....")
-
-        # take screenshot
-        elif "take screenshot" in query or "take a screenshot" in query:
-            speak("sir, please tell me the name for this screenshot file")
-            name = takecommand().lower()
-            speak("please sir hold the screen for few seconds, i am taking screenshot")
-            time.sleep(3)
-            img = pyautogui.screenshot()
-            img.save(f"{name}.png")
-            speak("i am done sir, the screen shot is saved in our main folder.")
-            speak("Do you have any other work sir....")
-
-        # Hide file
-        elif "hide all files" in query or "hide this folder" in query or "visible for everyone" in query:
-            speak("Sir please tell me you want to hide this folder or make it visible for everyone")
-            condition = takecommand().lower()
-            if "hide" in condition:
-                os.system("attrib +h /s /d")
-                speak("sir, all the files in this folder are now hidden.")
-            elif "visible" in condition:
-                os.system("attrib -h /s /d")
-                speak("sir, all the files in this folder are now visible to everyone. I wish you are taking the folder")
-            elif "leave it" in condition or "leave for now" in condition:
-                speak("ok sir")
-            speak("Do you have any other work sir....")
-
-        # Calculation
-        elif "calculate" in query or "calculation" in query:
-            calculation()
-            speak("Do you have any other work sir....")
-
-        #Translator
-        elif "translate" in query or "activate translate mode" in query:
-            translate()
-
-
-        # check temperature
-        elif "temperature" in query:
-            search = f"temperature in {PLACE}"
-            url = f"https://www.google.com/search?q={search}"
-            r = requests.get(url)
-            data = BeautifulSoup(r.text, "html.parser")
-            temp = data.find("div", class_="BNeawe").text
-            speak(f"current temperature is {temp} sir")
-            speak("Do you have any other work sir....")
-
-        # check weather
-        elif "weather" in query or "whether" in query:
-            weather()
-            speak("Do you have any other work sir....")
-
-        # AI response
-        elif "activate ai" in query or "ai mode" in query:
-            ai()
-            speak("Do you have any other work sir....")
-
+        try:
+            query = takecommand().lower()
+
+            # introduce ourself
+            if "tell me about yourself" in query or "introduce yourself" in query or "who are you" in query:
+                speak("Sure sir, I am Jarvis, an Advanced Voice Assistant. I am equipped with a variety of features to enhance your productivity and convenience. I can open and close any apps, search anything on Google and Wikipedia, check the temperature, facilitate message passing, transcribe spoken words into text, play games, utilize AI features for various tasks, perform keyboard shortcuts, control volume, play music, provide the latest news updates, print documents, manage system functions such as shutdown, restart, and sleep, check internet speed, and much more. I can also translate languages to help you communicate effectively. Simply tell me what you need, and I'll do my best to assist you efficiently.")
+
+            # open any apps
+            elif ("open" in query) and ("settings" not in query and "task" not in query and "accessibility" not in query and "it" not in query and "run" not in query and "emoji" not in query and "clipboard" not in query and "mail" not in query and "notification" not in query and "tab" not in query and "facebook" not in query and "youtube" not in query and "window" not in query and "downloads" not in query):
+                text_to_type = query.split("open", 1)[-1].strip()
+                speak(f"ok sir, opening {text_to_type}")
+                pyautogui.press('win')
+                time.sleep(0.5)
+                type_text(text_to_type)
+                pyautogui.press('enter')
+
+            # closing any apps
+            elif ("close" in query) and ("settings" not in query and "task" not in query and "program" not in query and "it" not in query and "accessibility" not in query and "run" not in query and "emoji" not in query and "clipboard" not in query and "mail" not in query and "page" not in query and "notification" not in query and "tab" not in query and "facebook" not in query and "youtube" not in query and "window" not in query and "downloads" not in query):
+                text_to_type = query.split("close", 1)[-1].strip()
+                speak(f"ok sir, closing {text_to_type}")
+                pyautogui.hotkey('alt', 'f4')
+                speak("Do you have any other work sir....")
+
+            #show functions text file
+            elif "show your usage" in query or "use" in query or "your functionalities" in query:
+                speak("Sure sir, showing my functionalities. Please read this...")
+                with open('Usage.txt', 'r') as file:
+                    content = file.read()
+                    print_colorful_usage(content)
+                speak("Do you have any other work sir....")
+
+            #time
+            elif "time" in query:
+                tt = time.strftime("%I:%M %p")
+                speak(f"now {tt} sir")
+
+            # camera functions
+            elif "take photo" in query or "take video" in query:
+                pyautogui.press('enter')
+            elif "change photo" in query or "switch to photo" in query:
+                pyautogui.press('down')
+            elif "change video" in query or "switch to video" in query:
+                pyautogui.press('up')
+
+            # Alarm set
+            elif "set alarm" in query or "set an alarm" in query:
+                clock()
+                speak("Do you have any other work sir....")
+
+            # settings open
+            elif "open settings" in query:
+                speak("Ok sir, Opening Settings")
+                pyautogui.hotkey('win', 'i')
+
+            # Task manager open
+            elif "open task manager" in query:
+                speak("ok sir, Opening task manager")
+                pyautogui.hotkey('ctrl', 'shift', 'esc')
+
+            # open run prompt
+            elif "open run prompt" in query or "open run bar" in query or "open run dialog box" in query:
+                pyautogui.hotkey('win', 'r')
+
+            # open accessibility
+            elif "open accessibility" in query:
+                speak("Ok sir, Opening Accessibility")
+                pyautogui.hotkey('win', 'u')
+
+            # lock the system
+            elif "lock the system" in query:
+                speak("Ok sir, Lock your system")
+                pyautogui.hotkey('win', 'l')
+
+            # open clipboard bar
+            elif "open clipboard" in query:
+                speak("Ok sir, Opening Clipboard")
+                pyautogui.hotkey('win', 'v')
+
+            # open emoji panel
+            elif "open emoji panel" in query:
+                speak("Ok sir, Opening emoji panel")
+                pyautogui.hotkey('win', '.')
+
+            # open mail
+            elif "open mail" in query or "check mail" in query or "open email" in query or "check email" in query:
+                speak("Please wait sir. I will display your inbox")
+                webbrowser.open("https://mail.google.com/mail/u/0/#inbox")
+
+            # Minimize and maximize control
+            elif "minimise all windows" in query or "minimise all window" in query:
+                speak("Ok sir, Minimizing all windows")
+                pyautogui.hotkey('win', 'm')
+            elif "maximize all windows" in query or "maximise all window" in query:
+                speak("Ok sir, Maximizing all windows")
+                pyautogui.hotkey('win', 'shift', 'm')
+            elif "minimise the window" in query or "minimise the page" in query:
+                speak("Ok sir, Minimizing the window")
+                pyautogui.hotkey('win', 'down')
+            elif "maximize the window" in query or "maximise the page" in query:
+                speak("Ok sir, Maximizing the window")
+                pyautogui.hotkey('win', 'up')
+
+            # Taskbar open and close function
+            elif "open first task" in query or "open 1st task" in query:
+                pyautogui.hotkey('win', '1')
+            elif "close first task" in query or "close 1st task" in query:
+                pyautogui.hotkey('win', '1')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open second task" in query or "open 2nd task" in query:
+                pyautogui.hotkey('win', '2')
+            elif "close second task" in query or "close 2nd task" in query:
+                pyautogui.hotkey('win', '2')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open third task" in query or "open 3rd task" in query:
+                pyautogui.hotkey('win', '3')
+            elif "close third task" in query or "close 3rd task" in query:
+                pyautogui.hotkey('win', '3')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open fourth task" in query or "open 4th task" in query:
+                pyautogui.hotkey('win', '4')
+            elif "close fourth task" in query or "close 4th task" in query:
+                pyautogui.hotkey('win', '4')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open fifth task" in query or "open 5th task" in query:
+                pyautogui.hotkey('win', '5')
+            elif "close fifth task" in query or "close 5th task" in query:
+                pyautogui.hotkey('win', '5')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open sixth task" in query or "open 6th task" in query:
+                pyautogui.hotkey('win', '6')
+            elif "close sixth task" in query or "close 6th task" in query:
+                pyautogui.hotkey('win', '6')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open seventh task" in query or "open 7th task" in query:
+                pyautogui.hotkey('win', '7')
+            elif "close seventh task" in query or "close 7th task" in query:
+                pyautogui.hotkey('win', '7')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open eighth task" in query or "open 8th task" in query:
+                pyautogui.hotkey('win', '8')
+            elif "close eighth task" in query or "close 8th task" in query:
+                pyautogui.hotkey('win', '8')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open ninth task" in query or "open 9th task" in query:
+                pyautogui.hotkey('win', '9')
+            elif "close ninth task" in query or "close 9th task" in query:
+                pyautogui.hotkey('win', '9')
+                pyautogui.hotkey('alt', 'f4')
+            elif "open tenth task" in query or "open 10th task" in query:
+                pyautogui.hotkey('win', '0')
+            elif "close tenth task" in query or "close 10th task" in query:
+                pyautogui.hotkey('win', '0')
+                pyautogui.hotkey('alt', 'f4')
+
+            # print screen
+            elif "print the page" in query or "print" in query:
+                speak("ok sir, printed the screen")
+                pyautogui.hotkey('ctrl', 'p')
+                pyautogui.press('enter')
+                speak("Do you have any other work sir....")
+
+            # notification open
+            elif "open notification bar" in query or "display notification" in query or "notification" in query or "show notification" in query:
+                speak("Ok sir, showing notifications")
+                pyautogui.hotkey('win', 'n')
+                speak("Do you have any other work sir....")
+
+            # Don't disturb mode
+            elif "don't disturb" in query:
+                pyautogui.hotkey('win', 'n')
+                time.sleep(0.5)
+                pyautogui.press('enter')
+                pyautogui.press('esc')
+                speak("Do you have any other work sir....")
+
+            # open new tab and close
+            elif "open new tab" in query or "create new tab" in query:
+                speak("Ok sir, Opening New Tab")
+                pyautogui.hotkey('ctrl', 't')
+
+            elif "no no close them" in query or "no no close it" in query or "close it" in query:
+                speak("ok sir, closing it")
+                pyautogui.hotkey('alt', 'f4')
+                speak("Do you have any other work sir....")
+
+            elif "close this tab" in query or "delete this tab" in query:
+                speak("Ok sir, closing this tab")
+                pyautogui.hotkey("ctrl", "w")
+
+            # Closing the page
+            elif "close the page" in query or "closing the page" in query or "close this page" in query or "closing this page" in query:
+                speak("Okay sir, Closing this page")
+                pyautogui.hotkey("ctrl", "w")
+                speak("Do you have any other work sir....")
+
+            #Delete
+            elif "delete it" in query:
+                speak("ok sir, Deleting it")
+                pyautogui.press('del')
+
+            #show downloads
+            elif "downloads" in query:
+                speak("ok sir, showing downloads page")
+                pyautogui.hotkey('ctrl', 'j')
+
+            #find something
+            elif "find" in query:
+                pyautogui.hotkey('ctrl', 'f')
+                time.sleep(0.5)
+                text_to_type = query.split("find", 1)[-1].strip()
+                speak("showing our result sir")
+                type_text(text_to_type)
+
+
+
+            # open new window
+            elif "open new window" in query or "create new window" in query:
+                speak("Ok sir, Opening New window")
+                pyautogui.hotkey('ctrl', 'n')
+
+            # Move tab next and previous
+            elif "move next tab" in query or "move the next tab" in query or "move to next tab" in query:
+                speak("Ok sir, Moving Next Tab")
+                pyautogui.hotkey('ctrl', 'tab')
+            elif "move previous tab" in query or "move the previous tab" in query or "move to previous tab" in query:
+                speak("Ok sir, Moving Previous Tab")
+                pyautogui.hotkey('ctrl', 'shift', 'tab')
+
+            # Select all,cut,copy,paste,save as
+            elif "select all text" in query or "select all" in query:
+                speak("Ok sir, selecting all text")
+                pyautogui.hotkey('ctrl', 'a')
+            elif "cut the text" in query or "cut" in query or "cut their" in query or "cut them" in query or "cut it" in query:
+                speak("Ok sir, cut the text")
+                pyautogui.hotkey('ctrl', 'x')
+            elif "copy the text" in query or "copy" in query or "copy their" in query or "copy them" in query or "copy it" in query:
+                speak("Ok sir, copied the text")
+                pyautogui.hotkey('ctrl', 'c')
+            elif "paste the text" in query or "paste" in query or "paste their" in query or "paste them" in query or "paste it" in query:
+                speak("Ok sir, pasting the text")
+                pyautogui.hotkey('ctrl', 'v')
+            elif "save as the file" in query or "save as" in query or "save as their" in query or "save as them" in query or "save as it" in query:
+                speak("Ok sir, saving the file")
+                pyautogui.hotkey('ctrl', 's')
+                speak("Do you have any other work sir....")
+
+
+            # youtube opening and closing
+            elif "open youtube" in query:
+                speak("Ok sir, Opening YouTube")
+                webbrowser.open("www.youtube.com")
+                speak("Do you have any other work sir....")
+            elif "close youtube" in query:
+                speak("Ok sir, Closing You Tube")
+                pyautogui.hotkey('alt', 'f4')
+                speak("Do you have any other work sir....")
+            elif "minimise the video" in query:
+                pyautogui.press('i')
+            elif "maximize the video" in query:
+                pyautogui.press('i')
+            elif "full screen" in query:
+                pyautogui.press('f')
+            elif "exit full screen" in query:
+                pyautogui.press('esc')
+            elif "caption" in query or "subtitle" in query:
+                pyautogui.press('c')
+
+            # facebook open and closing
+            elif "open facebook" in query:
+                speak("Okay sir, Opening Facebook")
+                webbrowser.open("www.facebook.com")
+
+            elif "close facebook" in query:
+                speak("Okay sir, Closing Facebook")
+                pyautogui.hotkey('alt', 'f4')
+                speak("Do you have any other work sir....")
+
+            # song on youtube
+            elif "song on youtube" in query:
+                speak("Please say the song name you want to play sir!")
+                song_name = takecommand()
+                # song_name = input("Please enter the name of the song you want to play: ")
+                pywhatkit.playonyt(song_name)
+                speak(f"Searching for {song_name} song on YouTube...")
+                speak("wait a second sir your song play quickly")
+                time.sleep(8)
+                pyautogui.press('k')
+
+            # find ip address
+            elif "ip address" in query:
+                ip_address = get_ip_address()
+                speak("Your IP address is " + ip_address)
+                speak("Do you have any other work sir....")
+
+            # find my location
+            elif "where i am" in query or "where we are" in query:
+                speak("wait a second sir, let me check")
+                location = get_location()
+                speak("sir i am not sure, but i think we are in " + location)
+                speak("Do you have any other work sir....")
+
+            # search wikipedia
+            elif "search on wikipedia" in query:
+                speak("searching on wikipedia...")
+                text_to_type = query.split("search on wikipedia")[0].strip()
+                if text_to_type:
+                    try:
+                        # Fetching summary from Wikipedia
+                        results = wikipedia.summary(text_to_type, sentences=2)
+                        speak(f"According to Wikipedia: {results}")
+                    except wikipedia.exceptions.DisambiguationError as e:
+                        speak("There are multiple results. Could you be more specific?")
+                    except wikipedia.exceptions.HTTPTimeoutError:
+                        speak("Sorry, there was a problem with the connection. Please try again later.")
+                    except Exception as e:
+                        speak("Sorry sir, I couldn't find any information on that.")
+                else:
+                    speak("Please specify what you want to search on Wikipedia, for example, 'what is python search on wikipedia'.")
+                speak("Do you have any other work sir...")
+
+            # search on google
+            elif "search on google" in query:
+                speak("Searching Google...")
+
+                # Extract the text before "search on google"
+                text_to_type = query.split("search on google")[0].strip()
+
+                if text_to_type:
+                    try:
+                        # Construct the Google search URL
+                        search_url = f"https://www.google.com/search?q={text_to_type}"
+                        webbrowser.open(search_url)  # Open the browser with the Google search URL
+                        speak(f"Here are the results for {text_to_type} on Google.")
+                    except Exception as e:
+                        speak("Sorry sir, I couldn't perform the Google search.")
+                else:
+                    speak("Please specify what you want to search on Google, for example, 'what is python search on Google'.")
+
+                speak("Do you have any other work sir...")
+
+            #Mouse controls
+            elif "right click" in query:
+                pyautogui.rightClick()
+            elif "left click" in query:
+                pyautogui.leftClick()
+            elif "click" in query:
+                pyautogui.click()
+            elif "double click" in query or "open it" in query:
+                pyautogui.doubleClick()
+
+            # keyboard contols
+            elif "zoom in" in query:
+                pyautogui.hotkey('ctrl', '+')
+            elif "zoom out" in query:
+                pyautogui.hotkey('ctrl', '-')
+            elif "pause" in query or "stop" in query:
+                pyautogui.press('playpause')
+            elif ("play" in query or "start" in query) and ("game" not in query and "song" not in query):
+                pyautogui.press('playpause')
+            elif "increase speed" in query or "increase play speed" in query:
+                pyautogui.hotkey('shift', '.')
+            elif "decrease speed" in query or "decrease play speed" in query:
+                pyautogui.hotkey('shift', ',')
+            elif "next video" in query:
+                pyautogui.hotkey('alt', 'right')
+                speak("ok sir, move to next video")
+            elif "previous video" in query:
+                pyautogui.hotkey('alt', 'left')
+                speak("ok sir, move to previous video")
+            elif "scroll up" in query:
+                pyautogui.press("pageup")
+            elif "scroll down" in query:
+                pyautogui.press("pagedown")
+            elif "type" in query:
+                text_to_type = query.split("type", 1)[-1].strip()
+                type_text(text_to_type)
+            elif "enter" in query or "send it" in query:
+                pyautogui.press('enter')
+            elif "tab" in query or "go to next field" in query or "go to next box" in query:
+                pyautogui.press('tab')
+
+            # erase and backspace function
+            elif ("erase" in query or "remove" in query) and ("letter" in query or "letters" in query):
+
+                num_letters = parse_erase_command(query)
+
+                # If a valid number of letters to erase is found, proceed with erasing
+                if num_letters is not None:
+                    erase_letters(num_letters)
+                else:
+                    speak("Sorry, I couldn't understand the number of letters to erase.")
+
+            # search anything type model
+            elif "search" in query:
+                text_to_type = query.split("search", 1)[-1].strip()
+                type_text(text_to_type)
+                pyautogui.press('enter')
+                speak("ok sir, Searching your result")
+
+            elif "send" in query:
+                text_to_type = query.split("send", 1)[-1].strip()
+                type_text(text_to_type)
+                pyautogui.press('enter')
+
+            # Volume controls
+            elif "mute" in query and "system" not in query and "all" not in query:
+                pyautogui.press("m")
+            elif "unmute" in query and "system" not in query and "all" not in query:
+                pyautogui.press("m")
+            elif "mute the system" in query or "mute the hole system" in query or "mute all" in query:
+                pyautogui.press("volumemute")
+            elif "unmute the system" in query or "mute the hole system" in query or "mute all" in query:
+                pyautogui.press("volumemute")
+            elif "volume up" in query:
+                pyautogui.press("volumeup")
+            elif "volume down" in query:
+                pyautogui.press("volumedown")
+
+            # GAME
+            elif "let's play a game" in query or "let's play game" in query or "let's play game" in query or "let's play a game" in query:
+                game()
+
+            # check battery percent
+            elif "how much power left" in query or "battery" in query or "how much power we have" in query:
+                battery = psutil.sensors_battery()
+                percentage = battery.percent
+                speak(f"Our system have {percentage}% battery sir")
+                speak("Do you have any other work sir....")
+
+            # check internet speed
+            elif "internet speed" in query:
+                speak("please wait a minute sir, checking internet speed...")
+                st = speedtest.Speedtest()
+                dp = st.download() / 1_000_000
+                up = st.upload() / 1_000_000
+                # ping = st.results.ping
+                speak(f"sir your internet speed is {dp:.2f} Mbps downloading speed and {up:.2f} Mbps uploading speed")
+                speak("Do you have any other work sir....")
+
+            # shutdown system
+            elif "shutdown the system" in query or "shutdown our system" in query or "shutdown my system" in query:
+                os.system("shutdown /s /t 5")
+                speak("Ok sir, Shutdown our system")
+
+            # restart system
+            elif "restart the system" in query or "restart our system" in query or "restart my system" in query:
+                os.system("shutdown /r /t 5")
+                speak("Ok sir, Restart our system")
+
+            # sleep system
+            elif "sleep the system" in query or "sleep our system" in query or "sleep my system" in query:
+                os.system("sudo pmset sleepnow")
+                os.system("rundll32.exe powrprof.dll,SetSuspendState 0,1,0")
+                speak("ok sir, sleep our system")
+
+            # switch window
+            elif "switch the window" in query or "switch" in query:
+                pyautogui.keyDown("alt")
+                pyautogui.press("tab")
+                time.sleep(0.5)
+                pyautogui.keyUp("alt")
+                speak("ok sir, switching the window")
+
+            # latest news
+            elif "news" in query:
+                speak("please wait sir, Fetching the top 10 general news.")
+                news()
+                speak("Do you have any other work sir....")
+
+            # closing Jarvis
+            elif "goodbye Jarvis" in query or "goodbye" in query or "close the program" in query or "exit the program" in query:
+                speak("Goodbye sir, have a good day.")
+                speak("Jarvis Deactivated")
+                sys.exit()
+
+            # Normal commands
+            elif "no thanks" in query:
+                speak("okay sir, if you have any work call me anytime sir")
+                while True:
+                    permission = takecommand()
+                    if "jarvis" in permission or "wake up" in permission:
+                        speak("Welcome back sir, please tell me how may i help you sir?")
+                        TaskExecution()
+            elif "ready" in query:
+                speak("Yes sir, I'm ready")
+            elif "thankyou" in query:
+                speak("your welcome sir.")
+            elif "hello" in query or "hey" in query:
+                speak("Hello sir, may i help you with something.")
+            elif "how are you" in query:
+                speak("I am fine sir, what about you.")
+            elif "also good" in query or "fine" in query:
+                speak("That's great to hear from you sir.")
+            elif "thank you" in query or "thanks" in query:
+                speak("It's my pleasure sir.")
+            elif "you can sleep" in query or "sleep now" in query or "go to sleep mode" in query or "go to sleep" in query:
+                speak("okay sir, i am going to sleep you call me anytime sir.")
+                while True:
+                    permission = takecommand()
+                    if "jarvis" in permission or "wake up" in permission:
+                        speak("Welcome back sir, please tell me how may i help you sir?")
+                        TaskExecution()
+
+            # check instagram profile
+            elif "instagram profile" in query or "profile on instagram" in query or "check instagram profile" in query or "let me check instagram profile" in query:
+                speak("sir please enter the username correctly.")
+                name = input("Enter username here:")
+                webbrowser.open(f"www.instagram.com/{name}")
+                speak(f"Sir here is the profile of the user {name}")
+                time.sleep(5)
+                speak("sir would you like to download a profile of this account.")
+                condition = takecommand().lower()
+                if "okay" in condition:
+                    mod = instaloader.Instaloader()
+                    mod.download_profile(name, profile_pic_only=True)
+                    speak("i am done sir, profile picture is saved in our main folder. Now i am ready for next command")
+                elif "don't want" in condition or "no" in condition:
+                    speak("Ok sir")
+                    pass
+                speak("Do you have any other work sir....")
+
+            # take screenshot
+            elif "screenshot" in query:
+                speak("sir, please tell me the name for this screenshot file")
+                name = takecommand()
+                speak("please sir hold the screen for few seconds, i am taking screenshot")
+                time.sleep(3)
+                img = pyautogui.screenshot()
+                img.save(f"{name}.png")
+                speak("i am done sir, the screen shot is saved in our main folder.")
+                speak("Do you have any other work sir....")
+
+            # Hide file
+            elif "hide all files" in query or "hide this folder" in query or "visible for everyone" in query:
+                speak("Sir please tell me you want to hide this folder or make it visible for everyone")
+                condition = takecommand().lower()
+                if "hide" in condition:
+                    os.system("attrib +h /s /d")
+                    speak("sir, all the files in this folder are now hidden.")
+                elif "visible" in condition:
+                    os.system("attrib -h /s /d")
+                    speak("sir, all the files in this folder are now visible to everyone. I wish you are taking the folder")
+                elif "leave it" in condition or "leave for now" in condition:
+                    speak("ok sir")
+                speak("Do you have any other work sir....")
+
+            # Calculation
+            elif "calculate" in query or "calculation" in query:
+                calculation()
+                speak("Do you have any other work sir....")
+
+            #Translator
+            elif "translate" in query or "activate translate mode" in query:
+                translate()
+
+
+            # check temperature
+            elif "temperature" in query:
+                search = f"temperature in {PLACE}"
+                url = f"https://www.google.com/search?q={search}"
+                r = requests.get(url)
+                data = BeautifulSoup(r.text, "html.parser")
+                temp = data.find("div", class_="BNeawe").text
+                speak(f"current temperature is {temp} sir")
+                speak("Do you have any other work sir....")
+
+            # check weather
+            elif "weather" in query or "whether" in query:
+                weather()
+                speak("Do you have any other work sir....")
+
+            # AI response
+            elif "activate ai" in query or "ai mode" in query:
+                ai()
+                speak("Do you have any other work sir....")
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            speak("Sorry sir, something went wrong, but I'm still running.")
 
 if __name__ == "__main__":
+
     speak("Voice Activation Required")
     while True:
         permission = takecommand()
@@ -1322,5 +1324,4 @@ if __name__ == "__main__":
 
         else:
             speak("Access Denied")
-
 
